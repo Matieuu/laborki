@@ -1,0 +1,35 @@
+BasedOnStyle: LLVM
+
+# Korzystaj z czytelnego formatowania bracketów
+BraceWrapping:
+  AfterFunction: false
+  AfterControlStatement: false
+  AfterStruct: false
+  AfterClass: false
+  AfterNamespace: false
+  AfterExternBlock: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+
+# Używaj indentacji tabulatora o wielkości 4 spacji
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+
+# NIE ruszaj komentarzy
+ReflowComments: false
+SpacesBeforeTrailingComments: 1
+BreakBeforeTrailingComments: false
+
+# NIE dodawaj pustych linii przez komentarze
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# NIE łam operacji nieczytelnych na wiele linii
+ColumnLimit: 0
+BreakBeforeBinaryOperators: None
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Always
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Always
