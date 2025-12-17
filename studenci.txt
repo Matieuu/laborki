@@ -1,0 +1,4 @@
+# [index] id. nick level płeć
+[0] 1. Matieuu 20 m
+[1] 2. Matysia 99 k
+[2] 3. Arkusz 1 m

@@ -2,8 +2,9 @@
 #include <iostream>
 #include <string>
 
+const unsigned int letter_count = 'z' - 'a' + 1;
+
 void count_letters(std::string text, unsigned int letters[]) {
-	const unsigned int letter_count = 'z' - 'a' + 1;
 	for (int index = 0; index < text.length(); index++) {
 		char letter = (char)text[index];                       // Dla debuggera
 		if (text[index] >= 'A' && text[index] <= 'Z') {        // Jeśli wielka litera
@@ -15,7 +16,6 @@ void count_letters(std::string text, unsigned int letters[]) {
 }
 
 int main(void) {
-	const unsigned int letter_count = 'z' - 'a' + 1;
 	unsigned int letters[letter_count] = {0};
 	std::string text;
 
