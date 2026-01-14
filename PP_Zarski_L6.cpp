@@ -1,8 +1,10 @@
+#include <ctime>
 #include <iostream>
 #include <string>
 
 int lastId = 0;
 
+// Struktura przechowująca dane o graczu
 struct Player {
 	int id;
 	std::string nick;
@@ -10,16 +12,20 @@ struct Player {
 	char gender;
 };
 
+// Element kolejki
 struct Node {
 	Player data;
 	Node *next;
 };
 
+// Struktura kolejki
 struct Queue {
 	Node *head = nullptr;
 	Node *tail = nullptr;
 };
 
+// Wypisuje menu programu
+// Zwraca opcję wybraną przez użytkownika
 int printMenu(void) {
 	int option;
 	std::cout << "=== MENU ===\n";
@@ -33,11 +39,18 @@ int printMenu(void) {
 	return option;
 }
 
+// Funkcja pomocnicza do sprawdzania czy kolejka jest pusta
+bool isQueueEmpty(Queue *queue) {
+	return queue->head == nullptr;
+}
+
+// Dodaje nowy element do kolejki
 void addElement(Queue *queue) {
 	Node *node = new Node();
 
 	node->next = nullptr;
 	node->data.id = lastId++;
+	node->data.level = std::rand() % 100;
 
 	std::cout << "Choose your nickname: ";
 	std::cin >> node->data.nick;
@@ -45,16 +58,19 @@ void addElement(Queue *queue) {
 	std::cout << "Choose your gender (m/k): ";
 	std::cin >> node->data.gender;
 
-	if (queue->head == nullptr) {
+	if (isQueueEmpty(queue)) {
+		// Jeśli kolejka jest pusta to zapisz element w głowie i ogonie
 		queue->head = queue->tail = node;
 	} else {
+		// Jeśli kolejka nie jest pusta to dodaj element na końcu
 		queue->tail->next = node;
 		queue->tail = node;
 	}
 }
 
+// Usuwa pierwszy element, najwcześniej dodany, FIFO
 void popElement(Queue *queue) {
-	if (queue->head == nullptr) {
+	if (isQueueEmpty(queue)) {
 		std::cout << "Queue is empty!\n";
 		return;
 	}
@@ -62,35 +78,38 @@ void popElement(Queue *queue) {
 	Node *temp = queue->head;
 	queue->head = queue->head->next;
 
-	if (queue->head == nullptr) queue->tail = nullptr;
+	// Jeśli kolejka jest pusta to usuń wskaźnik do końca kolejki
+	if (isQueueEmpty(queue)) queue->tail = nullptr;
 
 	std::cout << "Removed player: " << temp->data.nick << "\n";
 	delete temp;
 }
 
+// Wyświetla wszystkie elementy kolejki
 void displayQueue(Queue *queue) {
-	Node *current = queue->head;
-
-	if (current == nullptr) {
+	// Sprawdza czy kolejka jest pusta
+	if (isQueueEmpty(queue)) {
 		std::cout << "Queue is empty\n";
 		return;
 	}
 
-	int count = 1;
-	while (current != nullptr) {
-		std::cout << count << ". Player " << current->data.nick
-		          << " (" << current->data.gender << ", " << current->data.level << ")\n";
+	// Przetrzymuje obecnie wypisywany element
+	Node *current = queue->head;
 
-		count++;
+	while (current != nullptr) {
+		std::cout << current->data.id << ". Player " << current->data.nick
+		          << " (" << current->data.gender << ", " << current->data.level << ")\n";
 		current = current->next;
 	}
 }
 
 int main(void) {
+	std::srand(std::time(0));
 	Queue *queue = new Queue();
 	int option;
 
 	do {
+		// Funkcja printMenu zwraca opcję, która została wybrana
 		option = printMenu();
 
 		switch (option) {
@@ -118,7 +137,8 @@ int main(void) {
 	} while (option != 0);
 
 	std::cout << "Exiting...\n";
-	while (queue->head != nullptr) popElement(queue);
+	// Usuwa wszystkie elementy kolejki
+	while (isQueueEmpty(queue)) popElement(queue);
 	delete queue;
 	return 0;
 }
