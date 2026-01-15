@@ -7,22 +7,25 @@
 using namespace std;
 
 struct Student {
-	string firstname;
-	string surname;
-	string nickname;
+	int id;
+	string nick;
+	int level;
+	char sex;
 };
 
 void addElement(vector<Student> &db) {
 	Student student;
 
-	cout << "\nPodaj imie: ";
-	cin >> student.firstname;
-
-	cout << "\nPodaj nazwisko: ";
-	cin >> student.surname;
-
 	cout << "\nPodaj nick: ";
-	cin >> student.nickname;
+	cin >> student.nick;
+
+	cout << "Podaj level: ";
+	cin >> student.level;
+
+	cout << "Podaj płeć: ";
+	cin >> student.sex;
+
+	student.id = db.size() + 1;
 
 	db.push_back(student);
 }
@@ -35,7 +38,11 @@ bool displayDatabase(const vector<Student> &db) {
 
 	for (unsigned int index = 0; index < db.size(); index++) {
 		const Student &student = db[index];
-		cout << "\n[" << index << "] " << student.firstname << " \"" << student.nickname << "\" " << student.surname;
+		cout << "\n[" << index << "] "
+		     << student.id << ". "
+		     << student.nick << " "
+		     << student.level << " "
+		     << student.sex;
 	}
 
 	cout << "\n";
@@ -43,22 +50,31 @@ bool displayDatabase(const vector<Student> &db) {
 }
 
 void writeToFile(const vector<Student> &db, const string &filename) {
-	ofstream file(filename);
+	fstream file;
+	file.open(filename, ios::out);
 
 	if (!file.is_open()) {
 		cerr << "\nNie udało się otworzyć pliku do zapisu\n";
 		return;
 	}
 
+	file << "# [index] id. nick level płeć";
+	unsigned int index = 0;
 	for (const Student &student : db) {
-		file << student.firstname << " " << student.surname << " " << student.nickname << endl;
+		file << "\n[" << index << "] "
+		     << student.id << ". "
+		     << student.nick << " "
+		     << student.level << " "
+		     << student.sex;
+		index++;
 	}
 
 	file.close();
 }
 
 void readFromFile(vector<Student> &db, const string &filename) {
-	ifstream file(filename);
+	fstream file;
+	file.open(filename, ios::in);
 
 	if (!file.is_open()) {
 		cerr << "\nNie znaleziono pliku lub pojawił się błąd otwarcia\n";
@@ -66,10 +82,25 @@ void readFromFile(vector<Student> &db, const string &filename) {
 	}
 
 	db.clear();
+	string line;
 	Student student;
 
-	while (file >> student.firstname >> student.surname >> student.nickname) {
-		db.push_back(student);
+	file.seekg(0, file.end);
+	unsigned long long length = file.tellg();
+	file.seekg(0, file.beg);
+
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		if (line.substr(0, 1) == "#") continue;
+
+		int temp;
+		char buffer[255];
+		int varsFound = sscanf(line.c_str(), "[%d] %d. %s %d %c", &temp, &student.id, buffer, &student.level, &student.sex);
+
+		if (varsFound == 5) {
+			student.nick = buffer;
+			db.push_back(student);
+		}
 	}
 
 	file.close();
@@ -100,7 +131,7 @@ void toLower(string &value) {
 
 void findElement(const vector<Student> &db) {
 	string field;
-	cout << "\nWybierz pole do wyszukiwania (imie, nazwisko, nick): ";
+	cout << "\nWybierz pole do wyszukiwania (id, nick, level, plec): ";
 	cin >> field;
 
 	string phrase;
@@ -114,12 +145,14 @@ void findElement(const vector<Student> &db) {
 	for (const Student &student : db) {
 		string fieldToCheck;
 
-		if (field == "imie") {
-			fieldToCheck = student.firstname;
-		} else if (field == "nazwisko") {
-			fieldToCheck = student.surname;
+		if (field == "id") {
+			fieldToCheck = student.id;
 		} else if (field == "nick") {
-			fieldToCheck = student.nickname;
+			fieldToCheck = student.nick;
+		} else if (field == "level") {
+			fieldToCheck = student.level;
+		} else if (field == "plec") {
+			fieldToCheck = student.sex;
 		} else {
 			cerr << "\nNieprawidłowe pole do wyszukiwania\n";
 			return;
@@ -130,7 +163,11 @@ void findElement(const vector<Student> &db) {
 
 		// string::npos to "not found position"
 		if (fieldToCheck.find(phrase) != string::npos) {
-			cout << "\n[" << index << "] " << student.firstname << " \"" << student.nickname << "\" " << student.surname;
+			cout << "[" << index << "] "
+			     << student.id << ". "
+			     << student.nick << " "
+			     << student.level << " "
+			     << student.sex << " ";
 			isFound = true;
 		}
 
