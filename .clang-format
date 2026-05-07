@@ -12,9 +12,9 @@ BraceWrapping:
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
 
-# Używaj indentacji tabulatora o wielkości 4 spacji
-IndentWidth: 4
-TabWidth: 4
+# Używaj indentacji tabulatora o wielkości 2 spacji
+IndentWidth: 2
+TabWidth: 2
 UseTab: ForIndentation
 
 # NIE ruszaj komentarzy
